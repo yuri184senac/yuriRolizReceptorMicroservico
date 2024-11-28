@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+
+  # Banco de dados MySQL para sua aplicação
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: lavajato
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+
+  rabbitmq:
+    container_name: 'guide-rabbit'
+    image: 'rabbitmq:latest'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    ports:
+      - '5672:5672'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8082:8082'
+
+    depends_on:
+      - db
+      - rabbitmq
+
+
+
+
+volumes:
+  mysql_data:
+
